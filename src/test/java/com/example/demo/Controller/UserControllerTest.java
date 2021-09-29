@@ -120,5 +120,48 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email", is("Pat@mahomes.net")));
                 //.andExpect(jsonPath("$.password", is("chiefs")));
     }
+    @Test
+    @Transactional
+    @Rollback
+    void authenticateUserCorrectCreds() throws Exception {
+        //make user and add to db
+        User myUser = new User();
+        myUser.setName("Patrick");
+        myUser.setEmail("Pat@mahomes.net");
+        myUser.setPassword("chiefs");
+        repository.save(myUser);
+
+        MockHttpServletRequestBuilder request = post("/users/authenticate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"Pat@mahomes.net\",\"password\":\"chiefs\"}");
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authenticated", is(true) ))
+                .andExpect(jsonPath("$.user.id", is(myUser.getId().intValue()) ))
+                .andExpect(jsonPath("$.user.email", is(myUser.getEmail()) ));
+    }
+    @Test
+    @Transactional
+    @Rollback
+    void authenticateUserIncorrectCreds() throws Exception {
+        //make user and add to db
+        User myUser = new User();
+        myUser.setName("Patrick");
+        myUser.setEmail("Pat@mahomes.net");
+        myUser.setPassword("chiefs");
+        repository.save(myUser);
+
+        MockHttpServletRequestBuilder request = post("/users/authenticate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"Pat@mahomes.net\",\"password\":\"SBLIV\"}");
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authenticated", is(false) ));
+//                .andExpect(jsonPath("$.user.id", is("") ));
+//                .andExpect(jsonPath("$.user.email", is(myUser.getEmail()) ));
+
+    }
 }
 

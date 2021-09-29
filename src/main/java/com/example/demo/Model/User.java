@@ -22,14 +22,6 @@ public class User {
     @JsonView(Views.IdEmailNamePw.class)
     private String password;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
     public Long getId() {return id;}
 
     public void setId(Long id) {

@@ -87,7 +87,6 @@ public class UserController {
         if(auth.getUser()==null){
             auth.setAuthenticated(false);
         }
-
         return auth;
     }
 
